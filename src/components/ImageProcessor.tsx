@@ -2,15 +2,16 @@ import { useState, useRef, useEffect } from 'react';
 import Cropper from 'react-easy-crop';
 
 interface CropDimensions {
+  aspect: string;
   width: number;
   height: number;
-  aspect: number;
 }
 
 export default function ImageProcessor() {
   const [image, setImage] = useState<string | null>(null);
   const [borderColor, setBorderColor] = useState<string>('#ffffff');
   const [borderSize, setBorderSize] = useState<number>(10);
+  const [isHighQuality, setIsHighQuality] = useState<boolean>(false);
   const canvasRefs = useRef<{ [key: string]: HTMLCanvasElement | null }>({});
   const [cropPositions, setCropPositions] = useState<{
     [key: string]: { x: number; y: number };
@@ -19,9 +20,9 @@ export default function ImageProcessor() {
   const [croppedAreas, setCroppedAreas] = useState<{ [key: string]: any }>({});
 
   const cropDimensions: Record<string, CropDimensions> = {
-    square: { width: 256, height: 256, aspect: 1 },
-    portrait: { width: 256, height: 320, aspect: 3 / 4 },
-    landscape: { width: 320, height: 256, aspect: 4 / 3 },
+    square: { aspect: '1x1', width: 256, height: 256 },
+    portrait: { aspect: '3x4', width: 256, height: 320 },
+    landscape: { aspect: '4x3', width: 320, height: 256 },
   };
 
   useEffect(() => {
@@ -73,8 +74,8 @@ export default function ImageProcessor() {
       const canvas = canvasRefs.current[size];
       if (canvas) {
         const link = document.createElement('a');
-        link.download = `${size}-image.png`;
-        link.href = canvas.toDataURL();
+        link.download = `${size}-image.jpg`;
+        link.href = canvas.toDataURL('image/jpeg', isHighQuality ? 1.0 : 0.3);
         link.click();
       }
     }, 300);
@@ -113,8 +114,15 @@ export default function ImageProcessor() {
             type="color"
             value={borderColor}
             onChange={(e) => setBorderColor(e.target.value)}
-            className="p-2 border border-gray-600 rounded"
           />
+        </label>
+        <label className="flex items-center gap-2 mt-4">
+          <input
+            type="checkbox"
+            checked={isHighQuality}
+            onChange={() => setIsHighQuality(!isHighQuality)}
+          />
+          High Quality
         </label>
         <button
           onClick={() => Object.keys(cropDimensions).forEach(handleDownload)}
@@ -130,10 +138,7 @@ export default function ImageProcessor() {
           {image &&
             Object.entries(cropDimensions).map(([size, dimensions]) => (
               <div key={size} className="flex flex-col gap-2 items-center">
-                <p className="text-center font-semibold">
-                  {size.charAt(0).toUpperCase() + size.slice(1)} (
-                  {dimensions.width}x{dimensions.height})
-                </p>
+                <p className="text-center font-semibold">{dimensions.aspect}</p>
                 <div
                   className="relative"
                   style={{
@@ -146,7 +151,7 @@ export default function ImageProcessor() {
                     image={image}
                     crop={cropPositions[size] || { x: 0, y: 0 }}
                     zoom={zoomLevels[size] || 1}
-                    aspect={dimensions.aspect}
+                    aspect={dimensions.width / dimensions.height}
                     onCropChange={(crop) =>
                       setCropPositions((prev) => ({ ...prev, [size]: crop }))
                     }
