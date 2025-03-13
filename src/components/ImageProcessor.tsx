@@ -25,20 +25,6 @@ export default function ImageProcessor() {
   };
 
   useEffect(() => {
-    const initialCrops = Object.keys(cropDimensions).reduce((acc, size) => {
-      acc[size] = { x: 0, y: 0 };
-      return acc;
-    }, {} as { [key: string]: { x: number; y: number } });
-    setCropPositions(initialCrops);
-    setZoomLevels(
-      Object.keys(cropDimensions).reduce((acc, size) => {
-        acc[size] = 1;
-        return acc;
-      }, {} as { [key: string]: number })
-    );
-  }, []);
-
-  useEffect(() => {
     Object.keys(croppedAreas).forEach((size) => {
       processImage(size, croppedAreas[size]);
     });
@@ -55,7 +41,7 @@ export default function ImageProcessor() {
 
   const processImage = (size: string, croppedAreaPixels: any) => {
     const canvas = canvasRefs.current[size];
-    if (!canvas || !image) return;
+    if (!canvas || !image || !croppedAreaPixels) return;
 
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
@@ -81,11 +67,6 @@ export default function ImageProcessor() {
     };
   };
 
-  const handleCropComplete = (size: string, _: any, croppedAreaPixels: any) => {
-    setCroppedAreas((prev) => ({ ...prev, [size]: croppedAreaPixels }));
-    processImage(size, croppedAreaPixels);
-  };
-
   const handleDownload = (size: string) => {
     processImage(size, croppedAreas[size]);
     setTimeout(() => {
@@ -99,127 +80,101 @@ export default function ImageProcessor() {
     }, 300);
   };
 
-  const handleDownloadAll = () => {
-    Object.keys(cropDimensions).forEach((size) => {
-      setTimeout(() => handleDownload(size), 500);
-    });
-  };
-
   return (
-    <div
-      style={{
-        padding: '16px',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        gap: '16px',
-      }}
-    >
-      <input
-        type="file"
-        accept="image/*"
-        onChange={handleImageUpload}
-        style={{
-          padding: '8px',
-          border: '1px solid #ccc',
-          borderRadius: '4px',
-        }}
-      />
+    <div className="flex gap-6 p-6 min-h-screen bg-gray-900 text-white">
+      <div className="w-1/3 min-w-[300px] bg-gray-800 p-4 rounded-lg shadow-lg">
+        <h2 className="text-lg font-semibold mb-4">Settings</h2>
+        <input
+          type="file"
+          accept="image/*"
+          onChange={handleImageUpload}
+          className="p-2 border border-gray-600 rounded w-full"
+        />
+        <label className="flex flex-col mt-4">
+          Border Size:
+          <input
+            type="number"
+            value={borderSize}
+            onChange={(e) => setBorderSize(Number(e.target.value))}
+            className="p-2 border border-gray-600 rounded"
+          />
+          <input
+            type="range"
+            min="0"
+            max="50"
+            value={borderSize}
+            onChange={(e) => setBorderSize(Number(e.target.value))}
+            className="mt-2"
+          />
+        </label>
+        <label className="flex flex-col mt-4">
+          Border Color:
+          <input
+            type="color"
+            value={borderColor}
+            onChange={(e) => setBorderColor(e.target.value)}
+            className="p-2 border border-gray-600 rounded"
+          />
+        </label>
+        <button
+          onClick={() => Object.keys(cropDimensions).forEach(handleDownload)}
+          className="bg-green-500 text-white px-4 py-2 rounded mt-4 w-full"
+        >
+          Download All
+        </button>
+      </div>
 
-      {image && (
-        <>
-          <div style={{ marginBottom: '16px' }}>
-            <label>
-              Border Size:{' '}
-              <input
-                type="number"
-                value={borderSize}
-                onChange={(e) => setBorderSize(Number(e.target.value))}
-              />
-            </label>
-            <input
-              type="range"
-              min="0"
-              max="50"
-              value={borderSize}
-              onChange={(e) => setBorderSize(Number(e.target.value))}
-            />
-            <label>
-              Border Color:{' '}
-              <input
-                type="color"
-                value={borderColor}
-                onChange={(e) => setBorderColor(e.target.value)}
-              />
-            </label>
-          </div>
-
-          {Object.entries(cropDimensions).map(([size, dimensions]) => (
-            <div key={size} style={{ marginBottom: '16px' }}>
-              <p>
-                {size.charAt(0).toUpperCase() + size.slice(1)} (
-                {dimensions.width}x{dimensions.height})
-              </p>
-              <div
-                style={{
-                  position: 'relative',
-                  width: dimensions.width,
-                  height: dimensions.height,
-                  backgroundColor: '#ddd',
-                }}
-              >
-                <Cropper
-                  image={image}
-                  crop={cropPositions[size]}
-                  zoom={zoomLevels[size]}
-                  aspect={dimensions.aspect}
-                  onCropChange={(crop) =>
-                    setCropPositions((prev) => ({ ...prev, [size]: crop }))
-                  }
-                  onZoomChange={(zoom) =>
-                    setZoomLevels((prev) => ({ ...prev, [size]: zoom }))
-                  }
-                  onCropComplete={(croppedArea, croppedAreaPixels) =>
-                    handleCropComplete(size, croppedArea, croppedAreaPixels)
-                  }
+      <div className="w-2/3 min-w-[600px] bg-gray-800 p-4 rounded-lg shadow-lg">
+        <h2 className="text-lg font-semibold mb-4">Preview</h2>
+        <div className="grid grid-cols-2 gap-4">
+          {image &&
+            Object.entries(cropDimensions).map(([size, dimensions]) => (
+              <div key={size} className="flex flex-col gap-2 items-center">
+                <p className="text-center font-semibold">
+                  {size.charAt(0).toUpperCase() + size.slice(1)} (
+                  {dimensions.width}x{dimensions.height})
+                </p>
+                <div
+                  className="relative"
+                  style={{
+                    width: dimensions.width,
+                    height: dimensions.height,
+                    backgroundColor: '#444',
+                  }}
+                >
+                  <Cropper
+                    image={image}
+                    crop={cropPositions[size] || { x: 0, y: 0 }}
+                    zoom={zoomLevels[size] || 1}
+                    aspect={dimensions.aspect}
+                    onCropChange={(crop) =>
+                      setCropPositions((prev) => ({ ...prev, [size]: crop }))
+                    }
+                    onZoomChange={(zoom) =>
+                      setZoomLevels((prev) => ({ ...prev, [size]: zoom }))
+                    }
+                    onCropComplete={(croppedArea, croppedAreaPixels) =>
+                      setCroppedAreas((prev) => ({
+                        ...prev,
+                        [size]: croppedAreaPixels,
+                      }))
+                    }
+                  />
+                </div>
+                <canvas
+                  ref={(el) => (canvasRefs.current[size] = el)}
+                  className="hidden"
                 />
+                <button
+                  onClick={() => handleDownload(size)}
+                  className="bg-blue-500 text-white px-4 py-2 rounded"
+                >
+                  Download
+                </button>
               </div>
-              <canvas
-                ref={(el) => (canvasRefs.current[size] = el)}
-                style={{ display: 'none' }}
-              />
-              <button
-                onClick={() => handleDownload(size)}
-                style={{
-                  backgroundColor: '#007BFF',
-                  color: 'white',
-                  padding: '8px 16px',
-                  borderRadius: '4px',
-                  border: 'none',
-                  cursor: 'pointer',
-                  marginTop: '8px',
-                }}
-              >
-                Download
-              </button>
-            </div>
-          ))}
-
-          <button
-            onClick={handleDownloadAll}
-            style={{
-              backgroundColor: '#28a745',
-              color: 'white',
-              padding: '8px 16px',
-              borderRadius: '4px',
-              border: 'none',
-              cursor: 'pointer',
-            }}
-          >
-            Download All
-          </button>
-        </>
-      )}
+            ))}
+        </div>
+      </div>
     </div>
   );
 }
