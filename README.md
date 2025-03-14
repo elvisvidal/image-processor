@@ -1,54 +1,69 @@
-# React + TypeScript + Vite
+# **Image Resizer & Sharer**
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A **React-based** tool for cropping, resizing, and sharing images across different aspect ratios. Includes **custom borders**, **image quality selection**, and **social sharing**.
 
-Currently, two official plugins are available:
+🚀 **Live Demo:** [GitHub Pages Link](https://yourusername.github.io/your-repo)  
+📸 **Built with:** React, TypeScript, TailwindCSS, and React-Easy-Crop
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## Expanding the ESLint configuration
+## **📌 Features**
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+✅ Supports multiple aspect ratios: **1x1, 3x4, 4x3, 9x16**  
+✅ **Custom border** (size & color)  
+✅ **Download** cropped images in **JPEG format**  
+✅ **Share images** via Web Share API  
+✅ **High-quality & compressed download options**  
+✅ **Mobile-friendly layout**
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+---
+
+## **🔧 Installation & Setup**
+
+### **1️⃣ Clone the Repository**
+
+```sh
+git clone https://github.com/yourusername/image-processor.git
+cd image-processor
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### **2️⃣ Install Dependencies**
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
+```sh
+npm install
 ```
+
+### **3️⃣ Run the App**
+
+```sh
+npm run dev
+```
+
+Now visit **`http://localhost:5173`** in your browser.
+
+---
+
+## **📦 Dependencies**
+
+| Package                             | Description                  |
+| ----------------------------------- | ---------------------------- |
+| `react` & `react-dom`               | Core React libraries         |
+| `react-easy-crop`                   | Image cropping functionality |
+| `@fortawesome/react-fontawesome`    | Icons for UI buttons         |
+| `@fortawesome/free-solid-svg-icons` | FontAwesome icons for UI     |
+
+---
+
+## **📄 Usage Guide**
+
+1. **Upload an Image** 🖼️
+2. **Choose a crop aspect ratio** (Square, Portrait, Landscape, Story)
+3. **Adjust borders** (Size & Color)
+4. **Download** or **Share** the processed image
+5. **Toggle high-quality mode** for better image resolution
+
+---
+
+## **📜 License**
+
+MIT License. Feel free to use and modify!
