@@ -10,7 +10,7 @@ interface CropDimensions {
 export default function ImageProcessor() {
   const [image, setImage] = useState<string | null>(null);
   const [borderColor, setBorderColor] = useState<string>('#ffffff');
-  const [borderSize, setBorderSize] = useState<number>(10);
+  const [borderSize, setBorderSize] = useState<number>(45);
   const [isHighQuality, setIsHighQuality] = useState<boolean>(false);
   const canvasRefs = useRef<{ [key: string]: HTMLCanvasElement | null }>({});
   const [cropPositions, setCropPositions] = useState<{
@@ -23,6 +23,7 @@ export default function ImageProcessor() {
     square: { aspect: '1x1', width: 256, height: 256 },
     portrait: { aspect: '3x4', width: 256, height: 320 },
     landscape: { aspect: '4x3', width: 320, height: 256 },
+    story: { aspect: '9x16', width: 288, height: 512 },
   };
 
   useEffect(() => {
@@ -109,8 +110,8 @@ export default function ImageProcessor() {
   };
 
   return (
-    <div className="flex gap-6 p-6 min-h-screen bg-gray-900 text-white">
-      <div className="w-1/3 min-w-[300px] bg-gray-800 p-4 rounded-lg shadow-lg">
+    <div className="flex flex-col md:flex-row gap-6 p-6 min-h-screen bg-gray-900 text-white">
+      <div className="md:w-1/3 min-w-[300px] bg-gray-800 p-4 rounded-lg shadow-lg">
         <h2 className="text-lg font-semibold mb-4">Settings</h2>
         <input
           type="file"
@@ -122,6 +123,8 @@ export default function ImageProcessor() {
           Border Size:
           <input
             type="number"
+            min="0"
+            max="100"
             value={borderSize}
             onChange={(e) => setBorderSize(Number(e.target.value))}
             className="p-2 border border-gray-600 rounded"
@@ -129,7 +132,7 @@ export default function ImageProcessor() {
           <input
             type="range"
             min="0"
-            max="50"
+            max="100"
             value={borderSize}
             onChange={(e) => setBorderSize(Number(e.target.value))}
             className="mt-2"
@@ -159,9 +162,9 @@ export default function ImageProcessor() {
         </button>
       </div>
 
-      <div className="w-2/3 min-w-[600px] bg-gray-800 p-4 rounded-lg shadow-lg">
+      <div className="md:w-2/3 bg-gray-800 p-4 rounded-lg shadow-lg">
         <h2 className="text-lg font-semibold mb-4">Preview</h2>
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {image &&
             Object.entries(cropDimensions).map(([size, dimensions]) => (
               <div key={size} className="flex flex-col gap-2 items-center">
