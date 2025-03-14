@@ -185,7 +185,7 @@ export default function ImageProcessor() {
                     onZoomChange={(zoom) =>
                       setZoomLevels((prev) => ({ ...prev, [size]: zoom }))
                     }
-                    onCropComplete={(croppedArea, croppedAreaPixels) =>
+                    onCropComplete={(_, croppedAreaPixels) =>
                       setCroppedAreas((prev) => ({
                         ...prev,
                         [size]: croppedAreaPixels,
@@ -194,7 +194,9 @@ export default function ImageProcessor() {
                   />
                 </div>
                 <canvas
-                  ref={(el) => (canvasRefs.current[size] = el)}
+                  ref={(el) => {
+                    if (el) canvasRefs.current[size] = el;
+                  }}
                   className="hidden"
                 />
                 <div className="flex gap-2">
