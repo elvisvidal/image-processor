@@ -1,5 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import Cropper from 'react-easy-crop';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faDownload, faShareAlt } from '@fortawesome/free-solid-svg-icons';
 
 interface CropDimensions {
   aspect: string;
@@ -152,12 +154,13 @@ export default function ImageProcessor() {
             checked={isHighQuality}
             onChange={() => setIsHighQuality(!isHighQuality)}
           />
-          High Quality
+          High Quality File
         </label>
         <button
           onClick={() => Object.keys(cropDimensions).forEach(handleDownload)}
           className="bg-green-500 text-white px-4 py-2 rounded mt-4 w-full"
         >
+          <FontAwesomeIcon icon={faDownload} className="mr-2" />
           Download All
         </button>
       </div>
@@ -207,12 +210,14 @@ export default function ImageProcessor() {
                     onClick={() => handleDownload(size)}
                     className="bg-blue-500 text-white px-4 py-2 rounded"
                   >
+                    <FontAwesomeIcon icon={faDownload} className="mr-2" />
                     Download
                   </button>
                   <button
                     onClick={() => handleShare(size)}
                     className="bg-pink-500 text-white px-4 py-2 rounded"
                   >
+                    <FontAwesomeIcon icon={faShareAlt} className="mr-2" />
                     Share
                   </button>
                 </div>
