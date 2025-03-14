@@ -81,6 +81,33 @@ export default function ImageProcessor() {
     }, 300);
   };
 
+  const handleShare = (size: string) => {
+    processImage(size, croppedAreas[size]);
+    setTimeout(() => {
+      const canvas = canvasRefs.current[size];
+      if (canvas) {
+        canvas.toBlob((blob) => {
+          if (blob) {
+            const file = new File([blob], `${size}-image.png`, {
+              type: 'image/png',
+            });
+            if (navigator.share) {
+              navigator
+                .share({
+                  files: [file],
+                  title: 'Check out this image!',
+                  text: 'Created using ImageProcessor',
+                })
+                .catch((error) => console.log('Sharing failed', error));
+            } else {
+              alert('Sharing is not supported on this browser.');
+            }
+          }
+        }, 'image/png');
+      }
+    }, 300);
+  };
+
   return (
     <div className="flex gap-6 p-6 min-h-screen bg-gray-900 text-white">
       <div className="w-1/3 min-w-[300px] bg-gray-800 p-4 rounded-lg shadow-lg">
@@ -170,12 +197,20 @@ export default function ImageProcessor() {
                   ref={(el) => (canvasRefs.current[size] = el)}
                   className="hidden"
                 />
-                <button
-                  onClick={() => handleDownload(size)}
-                  className="bg-blue-500 text-white px-4 py-2 rounded"
-                >
-                  Download
-                </button>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => handleDownload(size)}
+                    className="bg-blue-500 text-white px-4 py-2 rounded"
+                  >
+                    Download
+                  </button>
+                  <button
+                    onClick={() => handleShare(size)}
+                    className="bg-pink-500 text-white px-4 py-2 rounded"
+                  >
+                    Share
+                  </button>
+                </div>
               </div>
             ))}
         </div>
