@@ -1,8 +1,8 @@
-# **Image Resizer & Sharer**
+# **Cut and Frame**
 
 A **React-based** tool for cropping, resizing, and sharing images across different aspect ratios. Includes **custom borders**, **image quality selection**, and **social sharing**.
 
-🚀 **Live Demo:** [GitHub Pages Link](https://yourusername.github.io/your-repo)  
+🚀 **Live Demo:** [GitHub Pages Link](https://elvisvidal.github.io/image-processor/)  
 📸 **Built with:** React, TypeScript, TailwindCSS, and React-Easy-Crop
 
 ---
