@@ -19,7 +19,9 @@ export default function ImageProcessor() {
     [key: string]: { x: number; y: number };
   }>({});
   const [zoomLevels, setZoomLevels] = useState<{ [key: string]: number }>({});
-  const [croppedAreas, setCroppedAreas] = useState<{ [key: string]: any }>({});
+  const [croppedAreas, setCroppedAreas] = useState<{
+    [key: string]: { x: number; y: number; width: number; height: number };
+  }>({});
 
   const cropDimensions: Record<string, CropDimensions> = {
     square: { aspect: '1x1', width: 256, height: 256 },
@@ -43,7 +45,10 @@ export default function ImageProcessor() {
     }
   };
 
-  const processImage = (size: string, croppedAreaPixels: any) => {
+  const processImage = (
+    size: string,
+    croppedAreaPixels: { x: number; y: number; width: number; height: number }
+  ) => {
     const canvas = canvasRefs.current[size];
     if (!canvas || !image || !croppedAreaPixels) return;
 
